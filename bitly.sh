@@ -1,24 +1,30 @@
 #!/bin/bash
 
-#############################################################################
-#                                                                           #
-#       Programm prueft Erreichbarkeit eines Webservers ueber verschiedene  #
-#       Routen und setzt anhand der Ergebnisse die Default-Routen des       #
-#       Systems.                                                            #
-#                                                                           #
-#       Aufruf          : chkroute.sh [ -h | --help ] [ -n | --noop ]       #
-#                                     [ -i | --interactive ]                #
-#                                                                           #
-#       Parameter       : -h | --help: Hilfe                                #
-#                                                                           #
-#                         -n | --noop: Fuehre keine Aenderungen durch,      #
-#                                      zeige nur was getan wuerde           #
-#                                                                           #
-#                         -i | --interactive: Schreibe Log zusaetzlich nach #
-#                                             stdout                        #
-#                                                                           #
-#############################################################################
-set -e
+#################################################################################
+#										#
+# 	Script for shortening of URLS via bitly (api v4).			#
+#										#
+#	Usage:		bitly.sh [ -h | --help ] [ -t | --use-token TOKEN]	#
+#				[ --store-token TOKEN]				#
+# 				[ -s | --shorten LONGURL]			#
+#				[ -l | --login ] [ -j | --json ]		#
+#										#
+#	Parameter:	-h | --help: Show help					#
+#										#
+#			-t | --use-token TOKEN: Use TOKEN to authenticate	#
+#			against bitly's api. Token will not be stored.		#
+# 										#
+# 			--store-token TOKEN: Stores an api-token		#
+#			in ~/.config/bitly_api_token for later use		#
+#										#
+#			-s | --shorten LONGURL: Shorten a url using bitly	#
+#										#
+#			-l | --login: Asks you for bitly.com username and	#
+#			password to genreate an api-token and saves the token	#
+# 										#
+# 			-j | --json: Output full JSON-response			#
+#										#
+#################################################################################
 
 MYPROG=$0
 [ ! -x $MYPROG ] && MYPROG=$(which $0 | awk '{ print $3 }')
