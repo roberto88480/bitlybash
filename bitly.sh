@@ -59,21 +59,25 @@ function _usage()
 
 function _storeToken()
 {
-	if test -f "$TOKENFILE"; then
-		echo "Stored Token ($FILE) already exists."
-		read -p "Overwrite it? " -n 1 -r
-		echo
-		if [[ ! $REPLY =~ ^[Yy]$ ]]
-		then
-			[[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
-		fi
-	fi
 	if [[ ${#1} -gt 5 ]]
 	then
 		echo $1 > $TOKENFILE
 	else
 		>&2 echo "Invalid Token"
 		exit 1
+	fi
+}
+
+function _checkTokenFile()
+{
+	if test -f "$TOKENFILE"; then
+		echo "File $TOKENFILE already exists."
+		read -p "Overwrite it? " -n 1 -r
+		echo
+		if [[ ! $REPLY =~ ^[Yy]$ ]]
+		then
+			[[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
+		fi
 	fi
 }
 
@@ -84,13 +88,12 @@ do
 			_usage 0
 		;;
 		-t|--use-token)
-			# use specified token instead of stored token
 			shift
 			APITOKEN=$1
 		;;
 		--store-token)
-			# store specified token and exit
 			shift
+			_checkTokenFile
 			_storeToken $1
 		;;
 		-s|--shorten)
@@ -106,6 +109,7 @@ do
 			# ask for username and password
 			# query api for access token
 			# save token to userdata
+			_checkTokenFile
 			echo "Please enter your Bitly.com Username and Password"
 			read -p 'Username: ' username
 			read -sp 'Password: ' password
@@ -116,7 +120,14 @@ do
 				exit 1
 			else
 				APIRESPONSE=$($CURL --silent --user "${username}:${password}" --request POST ${APIBASEURL}oauth/access_token)
-				echo "Response: " ${APIRESPONSE}
+				if [[ $? -eq 0 ]]
+				then
+					_storeToken ${APIRESPONSE} true
+				else
+					echo "Error"
+					echo ${APIRESPONSE}
+					exit 1
+				fi
 			fi
 			break
 		;;
